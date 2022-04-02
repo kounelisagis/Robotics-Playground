@@ -1,0 +1,436 @@
+<?xml version="1.0" ?>
+<robot name="urdf_door">
+  <material name="red">
+    <color rgba="1 0 0 1" />
+  </material>
+  <material name="green">
+    <color rgba="0 0.5 0 1" />
+  </material>
+  <material name="yellow">
+    <color rgba="1 1 0 1" />
+  </material>
+  <material name="orange">
+    <color rgba="0.82745098 0.329411765 0 1" />
+  </material>
+  <link name="body">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.4"/>
+      <inertia ixx="0.006666667" ixy="0" ixz="0" iyy="0.013333333" iyz="0" izz="0.017333333"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.4 0.6 0.2"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.4 0.6 0.3"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 -0.425 0"/>
+      <geometry>
+        <box size="0.25 0.25 0.25"/>
+      </geometry>
+      <material name="orange"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0.425 0"/>
+      <geometry>
+        <box size="0.25 0.25 0.25"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="FR_joint1" type="revolute">
+    <origin rpy="0 0 0" xyz="0.225 0.325 -0.1"/>
+    <parent link="body"/>
+    <child link="FR_foot1"/>
+    <axis xyz="1 0 0"/>
+    <dynamics damping="0.01" friction="0.1"/>
+    <limit effort="10" lower="-1.57" upper="1.57" velocity="2"/>
+  </joint>
+  <link name="FR_foot1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.2"/>
+      <inertia ixx="0.0015" ixy="0" ixz="0" iyy="0" iyz="0" izz="0.0015"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 -0.075"/>
+      <geometry>
+        <box size="0.05 0.05 0.15"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 -0.075"/>
+      <geometry>
+        <box size="0.05 0.05 0.15"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="FR_joint2" type="revolute">
+    <origin rpy="0 0 0" xyz="0 0 -0.15"/>
+    <parent link="FR_foot1"/>
+    <child link="FR_foot2"/>
+    <axis xyz="1 0 0"/>
+    <dynamics damping="0.01" friction="0.1"/>
+    <limit effort="10" lower="-1.57" upper="1.57" velocity="2"/>
+  </joint>
+  <link name="FR_foot2">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.2"/>
+      <inertia ixx="0.0015" ixy="0" ixz="0" iyy="0" iyz="0" izz="0.0015"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 -0.1"/>
+      <geometry>
+        <box size="0.05 0.05 0.2"/>
+      </geometry>
+      <material name="green"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 -0.1"/>
+      <geometry>
+        <box size="0.05 0.05 0.2"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="FR_joint3" type="prismatic">
+    <parent link="FR_foot2"/>
+    <child link="FR_foot3"/>
+    <dynamics damping="1.0" friction="0.0001"/>
+    <limit lower="0" upper="0.08" effort="100" velocity="0.05"/>
+    <origin rpy="0 0 0" xyz="0 0 -0.2"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+  <link name="FR_foot3">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.1"/>
+      <inertia ixx="0.00075" ixy="0" ixz="0" iyy="0" iyz="0" izz="0.00075"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 -0.05"/>
+      <geometry>
+        <box size="0.025 0.025 0.1"/>
+      </geometry>
+      <material name="yellow"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 -0.05"/>
+      <geometry>
+        <box size="0.025 0.025 0.1"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 -0.12"/>
+      <geometry>
+        <sphere radius="0.04"/>
+      </geometry>
+      <material name="yellow"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 -0.12"/>
+      <geometry>
+        <sphere radius="0.04"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="FL_joint1" type="revolute">
+    <origin rpy="0 0 0" xyz="-0.225 0.325 -0.1"/>
+    <parent link="body"/>
+    <child link="FL_foot1"/>
+    <axis xyz="1 0 0"/>
+    <dynamics damping="0.01" friction="0.1"/>
+    <limit effort="10" lower="-1.57" upper="1.57" velocity="2"/>
+  </joint>
+  <link name="FL_foot1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.2"/>
+      <inertia ixx="0.0015" ixy="0" ixz="0" iyy="0" iyz="0" izz="0.0015"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 -0.075"/>
+      <geometry>
+        <box size="0.05 0.05 0.15"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 -0.075"/>
+      <geometry>
+        <box size="0.05 0.05 0.15"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="FL_joint2" type="revolute">
+    <origin rpy="0 0 0" xyz="0 0 -0.15"/>
+    <parent link="FL_foot1"/>
+    <child link="FL_foot2"/>
+    <axis xyz="1 0 0"/>
+    <dynamics damping="0.01" friction="0.1"/>
+    <limit effort="10" lower="-1.57" upper="1.57" velocity="2"/>
+  </joint>
+  <link name="FL_foot2">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.2"/>
+      <inertia ixx="0.0015" ixy="0" ixz="0" iyy="0" iyz="0" izz="0.0015"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 -0.1"/>
+      <geometry>
+        <box size="0.05 0.05 0.2"/>
+      </geometry>
+      <material name="green"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 -0.1"/>
+      <geometry>
+        <box size="0.05 0.05 0.2"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="FL_joint3" type="prismatic">
+    <parent link="FL_foot2"/>
+    <child link="FL_foot3"/>
+    <dynamics damping="1.0" friction="0.0001"/>
+    <limit lower="0" upper="0.08" effort="100" velocity="0.05"/>
+    <origin rpy="0 0 0" xyz="0 0 -0.2"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+  <link name="FL_foot3">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.1"/>
+      <inertia ixx="0.00075" ixy="0" ixz="0" iyy="0" iyz="0" izz="0.00075"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 -0.05"/>
+      <geometry>
+        <box size="0.025 0.025 0.1"/>
+      </geometry>
+      <material name="yellow"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 -0.05"/>
+      <geometry>
+        <box size="0.025 0.025 0.1"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 -0.12"/>
+      <geometry>
+        <sphere radius="0.04"/>
+      </geometry>
+      <material name="yellow"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 -0.12"/>
+      <geometry>
+        <sphere radius="0.04"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="BR_joint1" type="revolute">
+    <origin rpy="0 0 0" xyz="0.225 -0.325 -0.1"/>
+    <parent link="body"/>
+    <child link="BR_foot1"/>
+    <axis xyz="1 0 0"/>
+    <dynamics damping="0.01" friction="0.1"/>
+    <limit effort="10" lower="-1.57" upper="1.57" velocity="2"/>
+  </joint>
+  <link name="BR_foot1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.2"/>
+      <inertia ixx="0.0015" ixy="0" ixz="0" iyy="0" iyz="0" izz="0.0015"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 -0.075"/>
+      <geometry>
+        <box size="0.05 0.05 0.15"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 -0.075"/>
+      <geometry>
+        <box size="0.05 0.05 0.15"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="BR_joint2" type="revolute">
+    <origin rpy="0 0 0" xyz="0 0 -0.15"/>
+    <parent link="BR_foot1"/>
+    <child link="BR_foot2"/>
+    <axis xyz="1 0 0"/>
+    <dynamics damping="0.01" friction="0.1"/>
+    <limit effort="10" lower="-1.57" upper="1.57" velocity="2"/>
+  </joint>
+  <link name="BR_foot2">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.2"/>
+      <inertia ixx="0.0015" ixy="0" ixz="0" iyy="0" iyz="0" izz="0.0015"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 -0.1"/>
+      <geometry>
+        <box size="0.05 0.05 0.2"/>
+      </geometry>
+      <material name="green"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 -0.1"/>
+      <geometry>
+        <box size="0.05 0.05 0.2"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="BR_joint3" type="prismatic">
+    <parent link="BR_foot2"/>
+    <child link="BR_foot3"/>
+    <dynamics damping="1.0" friction="0.0001"/>
+    <limit lower="0" upper="0.08" effort="100" velocity="0.05"/>
+    <origin rpy="0 0 0" xyz="0 0 -0.2"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+  <link name="BR_foot3">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.1"/>
+      <inertia ixx="0.00075" ixy="0" ixz="0" iyy="0" iyz="0" izz="0.00075"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 -0.05"/>
+      <geometry>
+        <box size="0.025 0.025 0.1"/>
+      </geometry>
+      <material name="yellow"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 -0.05"/>
+      <geometry>
+        <box size="0.025 0.025 0.1"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 -0.12"/>
+      <geometry>
+        <sphere radius="0.04"/>
+      </geometry>
+      <material name="yellow"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 -0.12"/>
+      <geometry>
+        <sphere radius="0.04"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="BL_joint1" type="revolute">
+    <origin rpy="0 0 0" xyz="-0.225 -0.325 -0.1"/>
+    <parent link="body"/>
+    <child link="BL_foot1"/>
+    <axis xyz="1 0 0"/>
+    <dynamics damping="0.01" friction="0.1"/>
+    <limit effort="10" lower="-1.57" upper="1.57" velocity="2"/>
+  </joint>
+  <link name="BL_foot1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.2"/>
+      <inertia ixx="0.0015" ixy="0" ixz="0" iyy="0" iyz="0" izz="0.0015"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 -0.075"/>
+      <geometry>
+        <box size="0.05 0.05 0.15"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 -0.075"/>
+      <geometry>
+        <box size="0.05 0.05 0.15"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="BL_joint2" type="revolute">
+    <origin rpy="0 0 0" xyz="0 0 -0.15"/>
+    <parent link="BL_foot1"/>
+    <child link="BL_foot2"/>
+    <axis xyz="1 0 0"/>
+    <dynamics damping="0.01" friction="0.1"/>
+    <limit effort="10" lower="-1.57" upper="1.57" velocity="2"/>
+  </joint>
+  <link name="BL_foot2">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.2"/>
+      <inertia ixx="0.0015" ixy="0" ixz="0" iyy="0" iyz="0" izz="0.0015"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 -0.1"/>
+      <geometry>
+        <box size="0.05 0.05 0.2"/>
+      </geometry>
+      <material name="green"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 -0.1"/>
+      <geometry>
+        <box size="0.05 0.05 0.2"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="BL_joint3" type="prismatic">
+    <parent link="BL_foot2"/>
+    <child link="BL_foot3"/>
+    <dynamics damping="1.0" friction="0.0001"/>
+    <limit lower="0" upper="0.08" effort="100" velocity="0.05"/>
+    <origin rpy="0 0 0" xyz="0 0 -0.2"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+  <link name="BL_foot3">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.1"/>
+      <inertia ixx="0.00075" ixy="0" ixz="0" iyy="0" iyz="0" izz="0.00075"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 -0.05"/>
+      <geometry>
+        <box size="0.025 0.025 0.1"/>
+      </geometry>
+      <material name="yellow"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 -0.05"/>
+      <geometry>
+        <box size="0.025 0.025 0.1"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 -0.12"/>
+      <geometry>
+        <sphere radius="0.04"/>
+      </geometry>
+      <material name="yellow"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 -0.12"/>
+      <geometry>
+        <sphere radius="0.04"/>
+      </geometry>
+    </collision>
+  </link>
+</robot>
