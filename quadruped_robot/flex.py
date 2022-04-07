@@ -29,7 +29,7 @@ print('Available Joints: ' + ', '.join(robot.joint_names()[1:]))
 # graphics.record_video("my_quadruped_robot.mp4")
 
 
-counter = 1
+counter = 0
 
 while counter < 5000:
     simu.step_world()
