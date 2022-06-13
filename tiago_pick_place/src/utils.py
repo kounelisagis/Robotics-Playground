@@ -1,5 +1,5 @@
 import numpy as np
-import RobotDART as rd
+
 
 def box_into_basket(box_translation, basket_translation, basket_angle):
     basket_xy_corners = np.array([basket_translation[0] + 0.14, basket_translation[0] + 0.14, basket_translation[0] - 0.14, basket_translation[0] - 0.14,
