@@ -2,7 +2,7 @@ import RobotDART as rd
 from utils import create_grid
 import numpy as np
 import py_trees
-from behaviours import ReachArmTarget, ReachWheelTarget, WaitState
+from behaviours import ReachArmTarget, ReachWheelTarget, ReachGripperTarget, WaitState
 
 
 def move_box_basket_robot(basket_positions, box_positions, box_size, basket, box, robot):
@@ -58,25 +58,36 @@ if __name__ == '__main__':
     py_trees.logging.level = py_trees.logging.Level.DEBUG
 
     # Create sequence node
-    sequence = py_trees.composites.Sequence(name="Pick 'n' Place")
+    root = py_trees.composites.Sequence(name="Pick 'n' Place")
+
+    pick = py_trees.composites.Sequence(name="Pick")
+    place = py_trees.composites.Sequence(name="Place")
 
     trA = ReachWheelTarget(robot, box, -0.5, dt, goal_bubble, "Wheel Approach Cube")
-    sequence.add_child(trA)
+    pick.add_child(trA)
 
-    trB = ReachArmTarget(robot, box, [0., 0, 0.15], dt, goal_bubble, -0.4, 15, 0.05, "Arm Approach Cube")
-    sequence.add_child(trB)
+    trB = ReachArmTarget(robot, box, [0., 0, 0.2], dt, goal_bubble, 5, 0.5, 1e-1, "Arm Approach Cube 1")
+    pick.add_child(trB)
 
-    trC = ReachArmTarget(robot, box, [0., 0, 0.4], dt, goal_bubble, -0.4, 20, 0.5, "Pick Cube")
-    sequence.add_child(trC)
+    trB_hat = ReachArmTarget(robot, box, [0., 0, 0.15], dt, goal_bubble, 10, 0.5, 1e-2, "Arm Approach Cube 2")
+    pick.add_child(trB_hat)
+
+    trH = ReachGripperTarget(robot, close=True, dt=dt, name="Close Gripper")
+    pick.add_child(trH)
+
+    trC = ReachArmTarget(robot, box, [0., 0, 0.4], dt, goal_bubble, 20, 0.5, 1e-2, "Pick Cube")
+    pick.add_child(trC)
 
     trD = ReachWheelTarget(robot, basket, -0.5, dt, goal_bubble, "Wheel Approach Basket")
-    sequence.add_child(trD)
+    place.add_child(trD)
 
-    trE = ReachArmTarget(robot, basket, [0., 0., 0.4], dt, goal_bubble, 0.4, 5, 0.01, "Arm Approach Basket")
-    sequence.add_child(trE)
+    # trE = ReachArmTarget(robot, basket, [0., 0., 0.4], dt, goal_bubble, 5, 0.01, 1e-1, "Arm Approach Basket")
+    # place.add_child(trE)
 
-    trF = WaitState(box, basket, "Wait")
-    sequence.add_child(trF)
+    trK = ReachGripperTarget(robot, close=False, dt=dt, name="Open Gripper")
+    place.add_child(trK)
+
+    root.add_children([pick, place, WaitState(box, basket)])
 
 
     # Create Graphics
@@ -101,7 +112,7 @@ if __name__ == '__main__':
     EPISODES = 50
     finished = 0
 
-    # py_trees.display.render_dot_tree(sequence)
+    py_trees.display.render_dot_tree(root)
 
     for episode in range(EPISODES):
 
@@ -112,12 +123,12 @@ if __name__ == '__main__':
                 break
 
             if simu.schedule(simu.control_freq()):
-                sequence.tick_once()
-                if sequence.status == py_trees.common.Status.SUCCESS:
+                root.tick_once()
+                if root.status == py_trees.common.Status.SUCCESS:
                     print('Episode {} finished!'.format(episode+1))
                     finished += 1
                     break
-                elif sequence.status == py_trees.common.Status.FAILURE:
+                elif root.status == py_trees.common.Status.FAILURE:
                     print('Episode {} failed!'.format(episode+1))
                     break
         else:

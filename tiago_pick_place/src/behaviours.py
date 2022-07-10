@@ -7,7 +7,7 @@ import time
 
 
 class ReachArmTarget(py_trees.behaviour.Behaviour):
-    def __init__(self, robot, goal, offset, dt, goal_bubble, finger_velocity_end, Kp, Ki, name="ReachArmTarget"):
+    def __init__(self, robot, goal, offset, dt, goal_bubble, Kp, Ki, max_error=1e-2, name="ReachArmTarget"):
         """
         offset: 3d vector
         """
@@ -17,10 +17,10 @@ class ReachArmTarget(py_trees.behaviour.Behaviour):
         self.offset = offset
         self.goal_bubble = goal_bubble
         self.eef_link_name = "gripper_link"
+        self.max_error = max_error
 
         self.dt = dt
         self.arm_dofs = ["arm_1_joint", "arm_2_joint", "arm_3_joint", "arm_4_joint", "arm_5_joint", "arm_6_joint", "arm_7_joint"]
-        self.finger_velocity_end = finger_velocity_end
         self.Kp = Kp
         self.Ki = Ki
 
@@ -53,7 +53,7 @@ class ReachArmTarget(py_trees.behaviour.Behaviour):
 
         # if error too small, report success
         err = np.linalg.norm(self.controller.error(tf))
-        if err < 1e-2:
+        if err < self.max_error:
             new_status = py_trees.common.Status.SUCCESS
 
         if new_status == py_trees.common.Status.SUCCESS:
@@ -65,8 +65,7 @@ class ReachArmTarget(py_trees.behaviour.Behaviour):
         return new_status
 
     def terminate(self, new_status):
-        if new_status == py_trees.common.Status.SUCCESS:
-            self.robot.set_commands([self.finger_velocity_end], ['gripper_finger_joint'])
+        self.robot.set_commands([0.]*len(self.arm_dofs), self.arm_dofs)
 
         self.logger.debug("%s.terminate()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
 
@@ -105,7 +104,7 @@ class ReachWheelTarget(py_trees.behaviour.Behaviour):
         self.tf_desired.set_translation(vec_desired[3:])
         self.tf_desired.set_rotation(dartpy.math.eulerZYXToMatrix([z,0,0]))
 
-        self.Kp = 0.5
+        self.Kp = 0.2
         self.Ki = 0.001
         self.controller = PITask(self.tf_desired, self.dt, self.Kp, self.Ki)
 
@@ -136,9 +135,57 @@ class ReachWheelTarget(py_trees.behaviour.Behaviour):
         return new_status
 
     def terminate(self, new_status):
-        if new_status == py_trees.common.Status.SUCCESS:
-            self.robot.set_commands([0.]*len(self.wheel_dofs), self.wheel_dofs)
+        self.robot.set_commands([0.]*len(self.wheel_dofs), self.wheel_dofs)
 
+        self.logger.debug("%s.terminate()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
+
+
+class ReachGripperTarget(py_trees.behaviour.Behaviour):
+    def __init__(self, robot, close, dt, name="ReachGripperTarget"):
+        super(ReachGripperTarget, self).__init__(name)
+        self.robot = robot
+        self.close = close
+        self.ee_link = "gripper_link"
+        self.gripper_dofs = ["gripper_finger_joint"]
+        self.dt = dt
+        self.velocities = []
+
+        self.logger.debug("%s.__init__()" % (self.__class__.__name__))
+
+    def setup(self):
+        self.logger.debug("%s.setup()->does nothing" % (self.__class__.__name__))
+
+    def initialise(self):
+        if self.close:
+            self.finger_cmd = [-0.4]
+        else:
+            self.finger_cmd = [0.4]
+
+        self.logger.debug("%s.initialise()->init controller" % (self.__class__.__name__))
+
+    def update(self):
+        new_status = py_trees.common.Status.RUNNING
+        self.robot.set_commands(self.finger_cmd, self.gripper_dofs)
+
+        vel = self.robot.velocities(self.gripper_dofs)[0]
+        pos = self.robot.positions(self.gripper_dofs)[0]
+
+        self.velocities.append(vel)
+
+        print(np.abs(self.velocities[:-10]).sum()/10)
+
+        if len(self.velocities) > 10 and np.abs(self.velocities[:-10]).sum()/10 < 1e-6:
+            new_status = py_trees.common.Status.SUCCESS
+
+        if new_status == py_trees.common.Status.SUCCESS:
+            self.feedback_message = "Reached target"
+            self.logger.debug("%s.update()[%s->%s][%s]" % (self.__class__.__name__, self.status, new_status, self.feedback_message))
+        else:
+            self.feedback_message = "Error: {0}, {1}".format(pos, vel)
+            self.logger.debug("%s.update()[%s][%s]" % (self.__class__.__name__, self.status, self.feedback_message))
+        return new_status
+
+    def terminate(self, new_status):
         self.logger.debug("%s.terminate()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
 
 
